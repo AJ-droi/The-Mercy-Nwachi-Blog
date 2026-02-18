@@ -1,36 +1,158 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Nwachi Blog
 
-## Getting Started
+Editorial-style blog built with Next.js App Router, Tailwind CSS v4, and Contentful CMS.
 
-First, run the development server:
+## Overview
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+This project renders blog content from Contentful and provides:
+
+- Homepage with featured hero slider + latest posts grid
+- Blog listing with pagination
+- Category filtering with pagination
+- Full-text search with pagination
+- Individual blog post pages with rich text rendering
+- Static About and Contact pages
+
+## Tech Stack
+
+- Next.js `16.1.6` (App Router)
+- React `19.2.3`
+- TypeScript (strict mode)
+- Tailwind CSS `v4` + custom CSS variables theme
+- Contentful Delivery API (`contentful` SDK)
+- Rich text rendering via `@contentful/rich-text-react-renderer`git
+
+## Project Structure
+
+```text
+blog/
+├── app/
+│   ├── page.tsx                 # Home page (hero + post grid)
+│   ├── blog/page.tsx            # Blog archive with pagination
+│   ├── blog/[slug]/page.tsx     # Single post page
+│   ├── category/[slug]/page.tsx # Category listing
+│   ├── search/page.tsx          # Search results
+│   ├── about/page.tsx           # About page
+│   ├── contact/page.tsx         # Contact page
+│   ├── globals.css              # Theme tokens + Tailwind imports
+│   └── layout.tsx               # Root layout with Header/Nav/Footer
+├── components/
+│   ├── Header.tsx
+│   ├── Navbar.tsx
+│   ├── Footer.tsx
+│   ├── HeroSlider.tsx
+│   ├── PostCard.tsx
+│   ├── Sidebar.tsx
+│   └── Pagination.tsx
+├── lib/
+│   └── contentful.ts            # Contentful client + query helpers
+└── public/
+    └── the-nwachi.svg           # Brand logo
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Prerequisites
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Node.js 20+ recommended
+- npm (or another package manager)
+- A Contentful space with blog content types populated
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Environment Variables
 
-## Learn More
+Create `blog/.env.local`:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+CONTENTFUL_SPACE_ID=your_space_id
+CONTENTFUL_DELIVERY_TOKEN=your_content_delivery_api_token
+CONTENTFUL_ENVIRONMENT=master
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Notes:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `CONTENTFUL_ENVIRONMENT` is optional and defaults to `master`.
+- Missing `CONTENTFUL_SPACE_ID` or `CONTENTFUL_DELIVERY_TOKEN` will cause runtime failures when fetching content.
 
-## Deploy on Vercel
+## Contentful Model Expectations
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The app expects these content types and fields:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### `blogPost`
+
+- `title` (Short text)
+- `slug` (Short text, unique)
+- `excerpt` (Short/long text)
+- `content` (Rich Text)
+- `coverImage` (Asset)
+- `publishedDate` (Date/Time)
+- `category` (Reference to `category`)
+
+### `category`
+
+- `name` (Short text)
+- `slug` (Short text, unique)
+
+## Installation
+
+From repo root:
+
+```bash
+cd blog
+npm install
+```
+
+## Running Locally
+
+```bash
+cd blog
+npm run dev
+```
+
+Open `http://localhost:3000`.
+
+## Available Scripts
+
+In `blog/package.json`:
+
+- `npm run dev` - Start development server
+- `npm run build` - Create production build
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
+
+## Routing Summary
+
+- `/` - Home
+- `/blog` - Blog archive (`?page=2`)
+- `/blog/[slug]` - Single post
+- `/category/[slug]` - Category archive (`?page=2`)
+- `/search?q=term` - Search results (`?q=term&page=2`)
+- `/about` - About
+- `/contact` - Contact
+
+## Data Fetching and Caching
+
+- Content is fetched server-side via `lib/contentful.ts`.
+- Listing pages use pagination helpers (`PagedResult`).
+- Main content pages set `export const revalidate = 60` (ISR every 60 seconds).
+
+## Current Known Gaps
+
+- `app/contact/page.tsx` posts to `/api/contact`, but no `app/api/contact/route.ts` exists yet.
+- Navbar includes `/category` link, but only `/category/[slug]` route exists.
+- Some placeholder values still exist (`Your Name`, `hello@yourdomain.com`, dummy social links, placeholder recent posts in footer/sidebar).
+
+## Deployment
+
+Recommended: Vercel deployment for Next.js App Router projects.
+
+Before deploying:
+
+1. Configure all Contentful environment variables in your hosting provider.
+2. Ensure Contentful content model and entries are published.
+3. Run `npm run build` successfully in `blog/`.
+
+## Next Improvements
+
+1. Implement `app/api/contact/route.ts` for contact form handling.
+2. Add category index page at `/category` or update navbar link behavior.
+3. Replace placeholder copy/links with real brand content.
+4. Add runtime validation/types for Contentful entries to reduce `any` usage.
+5. Add automated tests for pagination, search behavior, and content rendering.
