@@ -1,6 +1,22 @@
-export const revalidate = 60;
+import Image from "next/image";
+import Markdown from 'react-markdown'
+import remarkGfm from "remark-gfm";
+import { getAuthors } from "@/lib/contentful";
 
-export default function AboutPage() {
+// export const revalidate = 60;
+
+export default async function AboutPage() {
+
+  const author = await getAuthors()
+
+  const name = author[0].fields.fullName
+  const topics = author[0].fields.topic || []
+  const email = author[0].fields.email || ""
+  const profileImage = author[0]?.fields?.profileImage?.fields?.file?.url || ""
+  const aboutMe = author[0].fields.aboutMe || "This is a short bio about the author. It can include their background, interests, and what they hope to share through this blog.";
+  const aboutBlog = author[0].fields.aboutBlog || "This blog covers a range of topics related to design, storytelling, and digital experiences. Expect thoughtful articles, practical lessons, and inspiration from projects across brand, product, and content.";
+
+
   return (
     <main className="mx-auto max-w-6xl px-4 py-10">
       <div className="mx-auto max-w-3xl">
@@ -9,28 +25,30 @@ export default function AboutPage() {
             ABOUT
           </div>
 
-          <h1 className="mt-4 text-3xl font-semibold tracking-tight sm:text-4xl">
-            A little story about this blog
-          </h1>
-
-          <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-neutral-700">
-            This is an editorial-style blog built with Next.js, Tailwind, and
-            Contentful — optimized for readability and a calm, minimal vibe.
-          </p>
+        <div className="mt-4 text-sm leading-7 text-neutral-700">
+            <Markdown remarkPlugins={[remarkGfm]}>{aboutMe}</Markdown>
+          </div> 
 
           {/* subtle brand divider */}
-          <div className="mx-auto mt-6 h-[2px] w-16 rounded-full bg-brand" />
+          <div className="mx-auto mt-6 h-0.5 w-16 rounded-full bg-brand" />
         </div>
 
         <div className="mt-10 grid gap-8 md:grid-cols-[240px_1fr]">
           {/* Profile card */}
           <div className="rounded-2xl border border-neutral-200 p-5">
             <div className="relative aspect-square w-full overflow-hidden rounded-xl bg-brand-soft">
-              <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent" />
+              {profileImage && (
+                <Image
+                  src={profileImage}
+                  alt={name}
+                  fill
+                  className="object-cover"
+                />
+              )}
             </div>
 
             <div className="mt-4 text-center text-sm font-semibold">
-              Your Name
+              {name}
             </div>
 
             <div className="mt-1 text-center text-xs tracking-[0.18em] text-neutral-500">
@@ -38,36 +56,14 @@ export default function AboutPage() {
             </div>
 
             {/* brand accent */}
-            <div className="mx-auto mt-4 h-[1px] w-12 bg-brand/60" />
+            <div className="mx-auto mt-4 h-px w-12 bg-brand/60" />
           </div>
 
           {/* Main content */}
           <div className="rounded-2xl border border-neutral-200 p-6 sm:p-8">
-            <h2 className="text-sm font-semibold tracking-[0.22em] text-neutral-900">
-              WHY THIS BLOG
-            </h2>
-
-            <p className="mt-4 text-sm leading-7 text-neutral-700">
-              Use this space to tell your client’s story: what the blog covers,
-              who it’s for, and what readers should expect. Keep it short and
-              warm.
-            </p>
-
-            <h2 className="mt-10 text-sm font-semibold tracking-[0.22em] text-neutral-900">
-              WHAT YOU’LL FIND
-            </h2>
-
-            <ul className="mt-4 space-y-2 text-sm leading-7 text-neutral-700">
-              <li>
-                <span className="text-brand">•</span> Thoughtful articles and guides
-              </li>
-              <li>
-                <span className="text-brand">•</span> Curated categories for easy reading
-              </li>
-              <li>
-                <span className="text-brand">•</span> A calm design focused on content
-              </li>
-            </ul>
+            <div className="text-sm leading-7 text-neutral-700">
+              <Markdown remarkPlugins={[remarkGfm]}>{aboutBlog}</Markdown>
+            </div>
 
             {/* Quick facts */}
             <div className="mt-10 rounded-xl border border-neutral-200 bg-brand-soft p-5">
@@ -87,7 +83,7 @@ export default function AboutPage() {
                   <div className="text-xs tracking-[0.18em] text-neutral-500">
                     TOPICS
                   </div>
-                  <div>Tech, Life, Work</div>
+                  <div>{topics.join(", ")}</div>
                 </div>
 
                 <div>
@@ -101,7 +97,7 @@ export default function AboutPage() {
                   <div className="text-xs tracking-[0.18em] text-neutral-500">
                     CONTACT
                   </div>
-                  <div className="text-brand">hello@yourdomain.com</div>
+                  <div className="text-brand">{email}</div>
                 </div>
               </div>
             </div>

@@ -1,7 +1,10 @@
 import Link from "next/link";
 import Image from "next/image";
+import { getPostsPaged } from "@/lib/contentful";
 
-export default function Footer() {
+export default async function Footer() {
+  const { items: recentPosts } = await getPostsPaged(1, 3);
+
   return (
     <footer className="mt-10 border-t border-(--border) bg-brand-soft-2 text-(--fg)">
       <div className="mx-auto grid max-w-6xl grid-cols-1 gap-10 px-4 py-12 md:grid-cols-3">
@@ -28,21 +31,13 @@ export default function Footer() {
             RECENT POSTS
           </div>
           <ul className="mt-4 space-y-2 text-sm text-(--muted)">
-            <li>
-              <a className="hover:text-brand" href="#">
-                Beauty of Nature
-              </a>
-            </li>
-            <li>
-              <a className="hover:text-brand" href="#">
-                Family Comes First
-              </a>
-            </li>
-            <li>
-              <a className="hover:text-brand" href="#">
-                City Center Bridge
-              </a>
-            </li>
+            {recentPosts.map((post: any) => (
+              <li key={post.sys.id}>
+                <Link className="hover:text-brand" href={`/blog/${post.fields.slug}`}>
+                  {post.fields.title}
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
 

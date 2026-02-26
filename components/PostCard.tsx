@@ -45,7 +45,7 @@ export default function PostCard({
 
         <div className="mt-3">
           <Link
-            className="text-[11px] font-medium tracking-[0.25em] text-neutral-700 hover:text-neutral-950"
+            className="inline-flex items-center justify-center rounded-full border-2 border-brand px-5 py-2 text-[11px] font-semibold tracking-[0.22em] text-neutral-900 transition hover:bg-brand hover:text-white"
             href={`/blog/${slug}`}
           >
             READ MORE

@@ -1,23 +1,21 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Facebook, Instagram, Twitter } from "lucide-react";
+import { Facebook, Instagram, Twitter, Linkedin} from "lucide-react";
+import { getAuthors } from "@/lib/contentful";
+import Navbar from "./Navbar";
 
-export default function Header() {
+export default async function Header() {
+  const authors = await getAuthors();
+  const author = authors[0];
+
+  const facebookUrl = author?.fields?.facebookUrl || "#";
+  const linkedinUrl = author?.fields?.linkedinUrl || "#";
+  const instagramUrl = author?.fields?.instagramUrl || "#";
+
   return (
     <header className="border-b border-(--border) bg-brand-soft text-brand ">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 ">
-        {/* Social */}
-        <div className="flex items-center gap-3 text-sm">
-          <a className="hover:text-brand" href="#" aria-label="Facebook">
-            <Facebook aria-hidden="true" className="h-4 w-4" />
-          </a>
-          <a className="hover:text-brand" href="#" aria-label="Twitter">
-            <Twitter aria-hidden="true" className="h-4 w-4" />
-          </a>
-          <a className="hover:text-brand" href="#" aria-label="Instagram">
-            <Instagram aria-hidden="true" className="h-4 w-4" />
-          </a>
-        </div>
+       
 
         {/* Logo */}
         <Link href="/" aria-label="The Nwachi home" className="block">
@@ -33,23 +31,23 @@ export default function Header() {
     
         </Link>
 
-        {/* Search */}
-        <div className="flex items-center gap-2">
-          <form action="/search" className="hidden items-center gap-2 sm:flex">
-            <input
-              name="q"
-              className="w-56 rounded-full border border-[var(--border)] bg-[var(--card)] px-4 py-2 text-sm text-brand outline-none ring-2 ring-transparent placeholder:text-brand/70 focus:ring-brand"
-              placeholder="Search..."
-            />
-            <button
-              className="rounded-full border border-[var(--border)] px-3 py-2 text-sm text-brand hover:border-brand hover:text-brand"
-              aria-label="Search"
-              type="submit"
-            >
-              Search
-            </button>
-          </form>
+        <Navbar />
+
+
+         {/* Social */}
+        <div className="flex items-center gap-3 text-sm">
+          <a className="hover:text-brand" href={facebookUrl} aria-label="Facebook">
+            <Facebook aria-hidden="true" className="h-4 w-4" />
+          </a>
+          <a className="hover:text-brand" href={linkedinUrl} aria-label="Twitter">
+            <Linkedin aria-hidden="true" className="h-4 w-4" />
+          </a>
+          <a className="hover:text-brand" href={instagramUrl} aria-label="Instagram">
+            <Instagram aria-hidden="true" className="h-4 w-4" />
+          </a>
         </div>
+
+   
       </div>
     </header>
   );

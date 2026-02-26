@@ -1,14 +1,23 @@
-import { Facebook, Instagram, Twitter } from "lucide-react";
+import { Facebook, Instagram, Linkedin } from "lucide-react";
+import { getAuthors } from "@/lib/contentful";
 
 export const revalidate = 60;
 
-export default function ContactPage({
+export default async function ContactPage({
   searchParams,
 }: {
   searchParams?: { sent?: string; error?: string };
 }) {
+  const authors = await getAuthors();
+  const author = authors[0];
+
   const sent = searchParams?.sent === "1";
   const error = searchParams?.error === "1";
+  const email = author?.fields?.email || "hello@yourdomain.com";
+  const location = author?.fields?.location || "Remote";
+  const facebookUrl = author?.fields?.facebookUrl || "#";
+  const linkedinUrl = author?.fields?.linkedinUrl || "#";
+  const instagramUrl = author?.fields?.instagramUrl || "#";
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-10">
@@ -118,26 +127,26 @@ export default function ContactPage({
                   <div className="text-xs tracking-[0.18em] text-neutral-500">
                     EMAIL
                   </div>
-                  <div>hello@yourdomain.com</div>
+                  <div>{email}</div>
                 </div>
                 <div>
                   <div className="text-xs tracking-[0.18em] text-neutral-500">
                     LOCATION
                   </div>
-                  <div>Remote</div>
+                  <div>{location}</div>
                 </div>
                 <div>
                   <div className="text-xs tracking-[0.18em] text-neutral-500">
                     SOCIAL
                   </div>
                   <div className="flex gap-3">
-                    <a className="hover:text-neutral-950" href="#" aria-label="Facebook">
+                    <a className="hover:text-neutral-950" href={facebookUrl} aria-label="Facebook">
                       <Facebook aria-hidden="true" className="h-4 w-4" />
                     </a>
-                    <a className="hover:text-neutral-950" href="#" aria-label="Twitter">
-                      <Twitter aria-hidden="true" className="h-4 w-4" />
+                    <a className="hover:text-neutral-950" href={linkedinUrl} aria-label="Twitter">
+                      <Linkedin aria-hidden="true" className="h-4 w-4" />
                     </a>
-                    <a className="hover:text-neutral-950" href="#" aria-label="Instagram">
+                    <a className="hover:text-neutral-950" href={instagramUrl} aria-label="Instagram">
                       <Instagram aria-hidden="true" className="h-4 w-4" />
                     </a>
                   </div>

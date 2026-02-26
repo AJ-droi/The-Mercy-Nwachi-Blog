@@ -1,3 +1,4 @@
+import { unstable_cache } from "next/cache";
 import { createClient, Entry, EntrySkeletonType } from "contentful";
 
 const client = createClient({
@@ -8,6 +9,7 @@ const client = createClient({
 
 const POST_TYPE = "blogPost";
 const CATEGORY_TYPE = "category";
+const AUTHOR_TYPE = "author";
 
 export type PagedResult<T> = {
   items: T[];
@@ -85,3 +87,19 @@ export async function getAllCategories() {
   });
   return res.items as any[];
 }
+
+
+export const getAuthors = unstable_cache(
+  async () => {
+    const res = await client.getEntries({
+      content_type: AUTHOR_TYPE,
+      order: ["fields.fullName"],
+    });
+    return res.items as any[];
+  },
+  ["contentful-authors"],
+  {
+    revalidate: 60 , // 1 hour
+    tags: ["authors"],
+  }
+);

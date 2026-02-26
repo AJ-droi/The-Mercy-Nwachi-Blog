@@ -1,7 +1,7 @@
 import HeroSlider from "@/components/HeroSlider";
 import PostCard from "@/components/PostCard";
-import Sidebar from "@/components/Sidebar";
-import { getPostsPaged } from "@/lib/contentful";
+import BlogWidgets from "@/components/BlogWidgets";
+import { getAuthors, getPostsPaged } from "@/lib/contentful";
 
 export default async function Home() {
   const { items: posts } = await getPostsPaged(1, 7);
@@ -31,29 +31,27 @@ export default async function Home() {
     <main>
       <HeroSlider slides={slides} autoPlayMs={6000} />
 
-      <section className="mx-auto grid max-w-6xl grid-cols-1 gap-10 px-4 py-10 lg:grid-cols-[1fr_320px]">
-        <div className="space-y-14">
-          <div className="grid grid-cols-1 gap-14 md:grid-cols-2">
-            {rest.map((p) => {
-              const img = p?.fields?.coverImage?.fields?.file?.url
-                ? `https:${p.fields.coverImage.fields.file.url}`
-                : undefined;
+      <section className="mx-auto max-w-6xl space-y-10 px-4 py-10">
+        <BlogWidgets className="w-full" includeFollow={false} />
 
-              return (
-                <PostCard
-                  key={p.sys.id}
-                  title={p.fields.title}
-                  slug={p.fields.slug}
-                  excerpt={p.fields.excerpt}
-                  date={p.fields.publishedDate}
-                  imageUrl={img}
-                />
-              );
-            })}
-          </div>
+        <div className="grid grid-cols-1 gap-14 md:grid-cols-2">
+          {rest.map((p) => {
+            const img = p?.fields?.coverImage?.fields?.file?.url
+              ? `https:${p.fields.coverImage.fields.file.url}`
+              : undefined;
+
+            return (
+              <PostCard
+                key={p.sys.id}
+                title={p.fields.title}
+                slug={p.fields.slug}
+                excerpt={p.fields.excerpt}
+                date={p.fields.publishedDate}
+                imageUrl={img}
+              />
+            );
+          })}
         </div>
-
-        <Sidebar />
       </section>
     </main>
   );

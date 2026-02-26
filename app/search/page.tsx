@@ -1,6 +1,6 @@
 import PostCard from "@/components/PostCard";
 import Pagination from "@/components/Pagination";
-import Sidebar from "@/components/Sidebar";
+import BlogWidgets from "@/components/BlogWidgets";
 import { searchPostsPaged } from "@/lib/contentful";
 
 export const revalidate = 60;
@@ -62,7 +62,7 @@ export default async function SearchPage({
         ) : null}
       </div>
 
-      <Sidebar />
+      <BlogWidgets />
     </main>
   );
 }

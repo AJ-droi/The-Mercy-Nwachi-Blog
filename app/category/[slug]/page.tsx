@@ -1,6 +1,6 @@
 import PostCard from "@/components/PostCard";
 import Pagination from "@/components/Pagination";
-import Sidebar from "@/components/Sidebar";
+import BlogWidgets from "@/components/BlogWidgets";
 import { getPostsByCategorySlugPaged } from "@/lib/contentful";
 
 export const revalidate = 60;
@@ -44,7 +44,7 @@ export default async function CategoryPage({
         <Pagination basePath={`/category/${params.slug}`} page={data.page} totalPages={data.totalPages} />
       </div>
 
-      <Sidebar />
+      <BlogWidgets />
     </main>
   );
 }
